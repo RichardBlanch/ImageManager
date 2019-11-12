@@ -9,6 +9,7 @@
 
 #if os(iOS)
 import Foundation
+import UIKit
 
 class LocalURLHelper {
     private let fileManager: FileManager
