@@ -6,8 +6,8 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
-import CryptoKit
-import UIKit
+
+#if os(iOS)
 import Foundation
 
 class LocalURLHelper {
@@ -47,3 +47,4 @@ class LocalURLHelper {
         try hasher.hashURL(url)
     }
 }
+#endif

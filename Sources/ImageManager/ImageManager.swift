@@ -6,6 +6,7 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
+#if os(iOS)
 import Combine
 import Foundation
 import UIKit
@@ -110,3 +111,4 @@ private extension ImageManager {
         static let Images = Constant(rawValue: "Images")
     }
 }
+#endif

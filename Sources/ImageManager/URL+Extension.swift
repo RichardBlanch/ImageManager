@@ -6,8 +6,8 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
+#if os(iOS)
 import Combine
-import CryptoKit
 import Foundation
 import UIKit
 
@@ -32,3 +32,4 @@ extension Publishers {
         Just(type).setFailureType(to: Error.self).eraseToAnyPublisher()
     }
 }
+#endif

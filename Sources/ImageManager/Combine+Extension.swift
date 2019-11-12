@@ -6,9 +6,11 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
+#if os(iOS)
 import Combine
 import Foundation
 import UIKit
+
 
 extension Publisher where Self.Output == Data  {
     func createImage() -> AnyPublisher<UIImage, Error> {
@@ -62,3 +64,4 @@ extension Publisher where Self.Output == CachedImage {
         .eraseToAnyPublisher()
     }
 }
+#endif

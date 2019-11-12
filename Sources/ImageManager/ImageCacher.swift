@@ -5,7 +5,7 @@
 //  Created by Richard Blanchard on 11/7/19.
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
-
+#if os(iOS)
 import Foundation
 import UIKit
 
@@ -30,5 +30,6 @@ class ImageCacher {
         return cache.object(forKey: url as NSURL)
     }
 }
+#endif
 
 

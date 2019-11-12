@@ -1,4 +1,6 @@
+#if os(iOS)
 import XCTest
+#endif
 
 import ImageManagerTests
 

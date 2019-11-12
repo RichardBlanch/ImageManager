@@ -1,3 +1,4 @@
+#if os(iOS)
 import XCTest
 @testable import ImageManager
 
@@ -12,3 +13,4 @@ final class ImageManagerTests: XCTestCase {
         ("testExample", testExample),
     ]
 }
+#endif
