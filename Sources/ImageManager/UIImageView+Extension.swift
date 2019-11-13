@@ -11,7 +11,7 @@ import Combine
 import Foundation
 import UIKit
 
-extension UIImageView {
+public extension UIImageView {
     func bindToURL(_ url: URL, storingIn subscriptions: inout Set<AnyCancellable>) {
         fetchImage(at: url)
             .sink(receiveCompletion: { (_) in
@@ -28,8 +28,10 @@ extension UIImageView {
                 self.image = image
             })
     }
-    
-    private func fetchImage(at url: URL) -> AnyPublisher<UIImage, Error> {
+}
+
+private extension UIImageView {
+    func fetchImage(at url: URL) -> AnyPublisher<UIImage, Error> {
         return ImageManager.default.fetchImage(at: url)
     }
 }
