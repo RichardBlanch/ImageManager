@@ -6,7 +6,6 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
-#if os(iOS)
 import Combine
 import Foundation
 import UIKit
@@ -19,16 +18,21 @@ public class ImageManager {
     
     public static let `default` = ImageManager(urlSession: URLSession.shared, fileManager: FileManager.default)
     
-    public init(urlSession: URLSession, fileManager: FileManager) {
-        let cacheDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    public static func cachedImageDirectory() -> URL {
+        let fileManager = FileManager.default
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         let imageDirectory = URL(fileURLWithPath: "Images", isDirectory: true, relativeTo: cacheDirectory)
         
         if !fileManager.fileExists(atPath: imageDirectory.path) {
             try! fileManager.createDirectory(at: imageDirectory, withIntermediateDirectories: false, attributes: nil)
         }
-
+        
+        return imageDirectory
+    }
+    
+    public init(urlSession: URLSession, fileManager: FileManager, directoryToSave: URL = ImageManager.cachedImageDirectory()) {
         self.localURLHelper = LocalURLHelper(fileManager: fileManager,
-                                             directoryToSave: imageDirectory,
+                                             directoryToSave: directoryToSave,
                                              hasher: SHA256KeepingLowerCaseLettersHash())
 
         self.downloader = ImageDownloader(urlSession: urlSession, localURLHelper: localURLHelper)
@@ -52,23 +56,23 @@ public class ImageManager {
     /// Fetches a cached instance of an image for a given url or downloads that image from a remote URL.
     /// - Parameter url: The Remote URL for the image you would like to recieve.
     public func fetchImage(at remoteURL: URL) -> AnyPublisher<UIImage, Error> {
-        guard let hashedFileURL = hashedFileURL(for: remoteURL) else {
+        guard let createImageAtHashedURL = hashedFileURL(for: remoteURL) else {
             return downloadImage(at: remoteURL).receive(on: DispatchQueue.main).eraseToAnyPublisher()
         }
         
-        return fetchCachedImage(at: hashedFileURL).receive(on: DispatchQueue.main).eraseToAnyPublisher()
+        return fetchCachedImage(at: createImageAtHashedURL).receive(on: DispatchQueue.main).eraseToAnyPublisher()
     }
     
     /// If this method returns a non-nil url then we have already fetched this URL. The hashed version of this URL will be in our user's directory or our cache.
     /// - Parameter url: The URL that was fetched from the server. The hashed version of this url may be cached and will be returned in this method if it is.
     private func hashedFileURL(for remoteURL: URL) -> URL? {
-        guard let hashedFileURL = try? localURLHelper.getHashedURL(from: remoteURL) else {
+        guard let createImageAtHashedURL = try? localURLHelper.getHashedURL(from: remoteURL) else {
             return nil
         }
         
-        let doesHashedFileURLExist = localURLHelper.doesURLExist(hashedFileURL)
+        let doesHashedFileURLExist = localURLHelper.doesURLExist(createImageAtHashedURL)
         
-        return doesHashedFileURLExist ? hashedFileURL : nil
+        return doesHashedFileURLExist ? createImageAtHashedURL : nil
     }
     
     /// Downloads an image from a remote URL.
@@ -111,4 +115,3 @@ private extension ImageManager {
         static let Images = Constant(rawValue: "Images")
     }
 }
-#endif

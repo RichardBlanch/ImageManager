@@ -6,7 +6,6 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
-#if os(iOS)
 import Combine
 import Foundation
 import UIKit
@@ -26,10 +25,3 @@ extension URL {
         .eraseToAnyPublisher()
     }
 }
-
-extension Publishers {
-    static func convertToPublisher<T>(type: T) -> AnyPublisher<T, Error> {
-        Just(type).setFailureType(to: Error.self).eraseToAnyPublisher()
-    }
-}
-#endif

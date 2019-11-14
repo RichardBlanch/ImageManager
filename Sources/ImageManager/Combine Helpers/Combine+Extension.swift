@@ -6,11 +6,15 @@
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
 
-#if os(iOS)
 import Combine
 import Foundation
 import UIKit
 
+extension Publishers {
+    static func convertToPublisher<T>(type: T) -> AnyPublisher<T, Error> {
+        Just(type).setFailureType(to: Error.self).eraseToAnyPublisher()
+    }
+}
 
 extension Publisher where Self.Output == Data  {
     func createImage() -> AnyPublisher<UIImage, Error> {
@@ -42,7 +46,7 @@ extension Publisher where Self.Failure == Swift.Error {
 extension Publisher where Self.Output == UIImage {
     func moveImage(from remoteURL: URL, using localURLHelper: LocalURLHelper) -> AnyPublisher<CachedImage, Error> {
         tryMap {
-            try localURLHelper.addImageToDirectory(image: $0, from: remoteURL)
+            try localURLHelper.addImageToDirectory($0, from: remoteURL)
         }
         .mapStandardError()
         .eraseToAnyPublisher()
@@ -64,4 +68,3 @@ extension Publisher where Self.Output == CachedImage {
         .eraseToAnyPublisher()
     }
 }
-#endif

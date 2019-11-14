@@ -7,7 +7,6 @@
 //
 
 
-#if os(iOS)
 import Foundation
 import UIKit
 
@@ -22,7 +21,21 @@ class LocalURLHelper {
         self.hasher = hasher
     }
     
-    func addImageToDirectory(image: UIImage, from remoteURL: URL) throws -> CachedImage {
+    func doesURLExist(_ url: URL) -> Bool {
+        fileManager.fileExists(atPath: url.path)
+    }
+    
+    func addImageToDirectory(_ image: UIImage, from remoteURL: URL) throws -> CachedImage {
+        let createImageAtHashedURL = try self.createImageAtHashedURL(at: remoteURL, with: image)
+        return CachedImage(image: image, url: createImageAtHashedURL)
+    }
+    
+    func getHashedURL(from remoteURL: URL) throws -> URL? {
+        let hashedURLString = try getHashedURLString(remoteURL)
+        return URL(fileURLWithPath: hashedURLString, relativeTo: directoryToSave).appendingPathExtension("png")
+    }
+    
+    func createImageAtHashedURL(at remoteURL: URL, with image: UIImage) throws -> URL {
         let hashedURL = try getHashedURLString(remoteURL)
         let url = URL(fileURLWithPath: hashedURL, relativeTo: directoryToSave).appendingPathExtension("png")
 
@@ -32,20 +45,11 @@ class LocalURLHelper {
             throw Error.couldNotCreateFileAtURL(url)
         }
         
-        return CachedImage(image: image, url: url)
-    }
-    
-    func doesURLExist(_ url: URL) -> Bool {
-        fileManager.fileExists(atPath: url.path)
-    }
-    
-    func getHashedURL(from remoteURL: URL) throws -> URL? {
-        let hashedURLString = try getHashedURLString(remoteURL)
-        return URL(fileURLWithPath: hashedURLString, relativeTo: directoryToSave).appendingPathExtension("png")
+        return url
     }
     
     private func getHashedURLString(_ url: URL) throws -> String {
         try hasher.hashURL(url)
     }
 }
-#endif
+

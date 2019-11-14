@@ -5,12 +5,10 @@
 //  Created by Richard Blanchard on 11/7/19.
 //  Copyright © 2019 Richard Blanchard. All rights reserved.
 //
-#if os(iOS)
 import Foundation
 import UIKit
 
 class ImageCacher {
-
     private lazy var cache: NSCache<NSURL, UIImage> = {
         let cache = NSCache<NSURL, UIImage>()
         cache.name = "com.cache." + String(describing: type(of: self))
@@ -30,6 +28,5 @@ class ImageCacher {
         return cache.object(forKey: url as NSURL)
     }
 }
-#endif
 
 
